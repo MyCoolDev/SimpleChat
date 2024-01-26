@@ -1,7 +1,7 @@
 import socket
 import enum
 
-class status(enum):
+class status(enum.IntEnum):
     Wait = 0,
     Live = 1
 
