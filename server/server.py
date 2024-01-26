@@ -25,11 +25,12 @@ def main():
 
         # create the server socket
         server = socket.socket()
-        PORT = int(config["DEFAULT"]["SERVER_PORT"]) or int(config["DEFAULT"]["SERVER_RESERVE_PORT"])
-        IP = config["DEFAULT"]["SERVER_ADDRESS"]
+
+        PORT = config["SOCKET"]["SERVER_PORT"]
+        IP = config["SOCKET"]["SERVER_ADDRESS"]
+
         server.bind((IP, PORT))
-        # server.settimeout(int(config["DEFAULT"]["CONNECTION_TIMEOUT"]))
-        server.listen(int(config["DEFAULT"]["MAX_USERS"]))
+        server.listen(int(config["SOCKET"]["MAX_USERS"]))
 
         utils.server_print("The server is online on: " + IP + "/" + str(PORT))
 
