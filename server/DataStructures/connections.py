@@ -1,12 +1,12 @@
 import socket
 import enum
 
-class status(enum.IntEnum):
+class Status(enum.IntEnum):
     Wait = 0,
     Live = 1
 
-class connection:
+class Connection:
     def __init__(self, address: str, con: socket.socket):
         self.connection = con
-        self.status: status = status.Wait
+        self.status: Status = Status.Wait
         self.data = {'address': address}
