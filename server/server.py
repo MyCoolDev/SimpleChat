@@ -57,6 +57,7 @@ def handle_client(con: Connection):
     # (...) add db for messages.
     # (...) create a format for the db, interface...
     # (...) load old messages!
+    # (...) add cache to client, think of a way to know if the client have the old message or not, hashing.
 
     # replace the event long string (all the strings) to code (number)
 
@@ -76,11 +77,15 @@ def handle_client(con: Connection):
                 con.connection.send(json.dumps({'event': 'bad_formatting'}).encode())
                 continue
 
+            # take the current datetime immediately.
+            time = datetime.datetime.now()
+
             if con.status == connections.Status.Wait:
                 # 1. wait until the user give his username.
                 # 2. add the username to the data section.
                 # 3. transfer the connection from the wait list to the live connections.
                 # 4. change status to live.
+                # 5. update all the live users that a new user join the chat.
 
                 # username requirements:
                 # 1. username length > 1.
@@ -104,13 +109,13 @@ def handle_client(con: Connection):
                     # reply to the client.
                     con.connection.send(json.dumps({'event': 'redirected_to_live'}).encode())
 
+                    # update all the live users about the new connection
+                    for client_connection in live_connections:
+                        client_connection.connection.send(json.dumps({'event': 'new_connection', 'data': {'username': request['data']['username'], 'time': time.strftime("%m-%d-%Y %H:%M:%S")}}).encode())
+
             elif con.status == connections.Status.Live:
                 # 1. wait utils the user send a message.
                 # 2. send the message to all users.
-
-                # take the current datetime immediately.
-
-                time = datetime.datetime.now()
 
                 # new message requirements:
                 # 1. content length > 0.
@@ -120,7 +125,7 @@ def handle_client(con: Connection):
                     request['data']['author'] = con.data['username']
                     request['data']['time'] = time.strftime("%m-%d-%Y %H:%M:%S")
 
-                    print("New message: " + str(request['data']))
+                    utils.server_print("New message: " + str(request['data']))
 
                     # send the new message to all clients.
                     # (!) maybe send it in new thread.

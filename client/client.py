@@ -126,8 +126,15 @@ def listen_response(client: socket.socket, config: dict, eng: engine):
                 elif response['event'] == "username_already_exists":
                     eng.username_input.update_color((255, 0, 0))
             elif eng.state == "chat":
+
+                if not ('data' in response.keys() and type(response['data']) == dict):
+                    continue
+
+                if response['event'] == "new_connection" and 'username' in response['data'].keys() and 'time' in response['data'].keys():
+                    eng.chat.add_user_message({'username': response['data']['username'], 'time': response['data']['time']})
+
                 # new_message
-                if response['event'] == "new_message" and 'data' in response.keys() and 'content' in response['data'].keys() and 'time' in response['data'].keys() and 'author' in response['data'].keys():
+                if response['event'] == "new_message" and 'content' in response['data'].keys() and 'time' in response['data'].keys() and 'author' in response['data'].keys():
                     eng.chat.add_message(Message(response['data']))
 
     except Exception as e:
