@@ -32,7 +32,8 @@ class engine:
         self.username = ""
         self.username_input = Text(self.username, "Poppins", 32, pygame.Vector2(self.screen.get_width() / 2, self.screen.get_height() / 2 + 10), (255, 255, 255))
 
-        self.chat = Chat(pygame.Vector2(0.8 * self.screen.get_width(), self.screen.get_height()), pygame.Vector2(0.1 * self.screen.get_width(), 0), 15)
+        self.chat_size = pygame.Vector2(0.6 * self.screen.get_width(), self.screen.get_height())
+        self.chat = Chat(self.chat_size, pygame.Vector2(self.screen.get_width() / 2 - self.chat_size.x / 2, self.screen.get_height() - self.chat_size.y), 15)
 
         self.client_thread = threading.Thread(target=listen_response, args=[self.client, config, self])
         self.client_thread.start()

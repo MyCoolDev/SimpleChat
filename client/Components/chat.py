@@ -6,12 +6,14 @@ from Components.UI.TextBox import TextBox
 pygame.font.init()
 
 class Chat:
+    # (...) add maximum size to each message.
+
     def __init__(self, size: pygame.Vector2, position: pygame.Vector2, message_margin: int):
         self.size = size
         self.position = position
         self.message_margin = message_margin
 
-        self.scroll_point = 0
+        self.scroll_point = 20
 
         self.message_style = MessageStyle((61, 61, 66), "Poppins", 25, 20, 25, (255, 255, 255), (173, 173, 173), (255, 255, 255), border_radius=15)
 
@@ -32,8 +34,13 @@ class Chat:
 
     def render(self, surface: pygame.Surface):
         margin_top = 0
+
         for i, msg in enumerate(self.messages):
             margin_top += self.message_style.implement(pygame.Vector2(self.position.x, self.position.y + self.scroll_point + i * self.message_margin + margin_top), msg, surface).y
+
+        if margin_top + self.message_margin * (len(self.messages) - 1) + self.scroll_point >= self.msg_input.position.y - 20:
+            self.scroll_point -= margin_top + self.message_margin * (len(self.messages) - 1) + self.scroll_point - (self.msg_input.position.y - 20)
+
         self.msg_input.render(surface)
 
 class MessageStyle:
@@ -65,7 +72,7 @@ class MessageStyle:
 
         self.width, self.border_radius, self.border_top_left_radius, self.border_top_right_radius, self.border_bottom_left_radius, self.border_bottom_right_radius = width, border_radius, border_top_left_radius, border_top_right_radius, border_bottom_left_radius, border_bottom_right_radius
 
-    def implement(self, position: pygame.Vector2, data: Message, surface: pygame.Surface):
+    def implement(self, position: pygame.Vector2, data: Message, surface: pygame.Surface) -> pygame.Vector2:
         author_text = self.author_font.render(data.author, True, self.author_text_color)
         time_text = self.time_font.render(data.time, True, self.time_text_color)
         content_text = self.content_font.render(data.content, True, self.content_text_color)

@@ -47,7 +47,7 @@ class TextBox(MonoBehaviour):
             self.is_default_content_presented = False
 
         if self.content == self.default_content[:-1] and self.is_default_content_presented:
-            self.content = ""
+            self.content = self.default_content
             self.is_default_content_presented = False
 
         self.text = Text(self.content, self.font, self.font_size, self.text_position, self.text_color, left_mode=True)
@@ -57,7 +57,7 @@ class TextBox(MonoBehaviour):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_BACKSPACE:
                     self.update_text(self.content[:-1])
-                elif event.key == pygame.K_RETURN:
+                elif event.key == pygame.K_RETURN and not self.is_default_content_presented:
                     return True
                 elif event.unicode != "":
                     self.update_text(self.content + event.unicode)
