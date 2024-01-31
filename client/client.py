@@ -5,6 +5,7 @@ import threading
 
 from Components.UI.Text import Text
 from Components.chat import *
+from Components.UI.TextBox import TextBox
 from DataStructures.message import Message
 
 import utils
@@ -30,9 +31,10 @@ class engine:
         self.client.settimeout(int(config["SOCKET"]["CONNECTION_TIMEOUT"]))
 
         self.username = ""
-        self.username_input = Text(self.username, "Poppins", 32, pygame.Vector2(self.screen.get_width() / 2, self.screen.get_height() / 2 + 10), (255, 255, 255))
+        self.username_input_size = pygame.Vector2(0.4 * self.screen.get_width(), 50)
+        self.username_input = TextBox(self.username_input_size, pygame.Vector2(self.screen.get_width() / 2 - self.username_input_size.x / 2, self.screen.get_height() / 2), (39, 39, 43), "Enter a username...", "Poppins", 25, (166, 166, 166), padding_left=30, border_radius=30)
 
-        self.chat_size = pygame.Vector2(0.6 * self.screen.get_width(), self.screen.get_height())
+        self.chat_size = pygame.Vector2(0.5 * self.screen.get_width(), self.screen.get_height())
         self.chat = Chat(self.chat_size, pygame.Vector2(self.screen.get_width() / 2 - self.chat_size.x / 2, self.screen.get_height() - self.chat_size.y), 15)
 
         self.client_thread = threading.Thread(target=listen_response, args=[self.client, config, self])
@@ -62,16 +64,18 @@ class engine:
                 quit()
             elif event.type == pygame.KEYDOWN:
                 if self.state == "sign":
-                    if self.username_input.color != (255, 255, 255):
-                        self.username_input.update_color((255, 255, 255))
+                    if self.username_input.text.color != (255, 255, 255):
+                        self.username_input.text.update_color((255, 255, 255))
 
                     if event.key == pygame.K_BACKSPACE:
                         self.username = self.username[:-1]
+
                     elif event.key == pygame.K_RETURN:
                         # the username requirement is that the username length is more than 1
                         # if the username is ok than send the username to the server
                         if len(self.username) > 1:
                             self.client.send(json.dumps({'event': 'update_username', 'data': {'username': self.username}}).encode())
+
                     elif event.unicode != "":
                         self.username += event.unicode
 
@@ -80,8 +84,8 @@ class engine:
         self.state = new_state
 
         if new_state == "sign":
-            self.render_system.append(Text("Please enter a username", "Poppins", 32, pygame.Vector2(self.screen.get_width() / 2, self.screen.get_height() / 2 - 10), (255, 255, 255)))
             self.render_system.append(self.username_input)
+
         elif new_state == "chat":
             self.render_system.append(self.chat)
 
