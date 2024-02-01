@@ -96,7 +96,7 @@ def handle_client(con: Connection):
                         continue
 
                     # add the username to the data section.
-                    con.data['username'] = request['data']['username']
+                    con.data['username'] = request['data']['username'].strim()
 
                     # transfer the connection from the wait list to the live connections.
                     live_connections.append(con)
@@ -111,7 +111,7 @@ def handle_client(con: Connection):
 
                     # update all the live users about the new connection
                     for client_connection in live_connections:
-                        client_connection.connection.send(json.dumps({'event': 'new_connection', 'data': {'username': request['data']['username'], 'time': time.strftime("%m-%d-%Y %H:%M:%S")}}).encode())
+                        client_connection.connection.send(json.dumps({'event': 'new_connection', 'data': {'username': con.data['username'], 'time': time.strftime("%m-%d-%Y %H:%M:%S")}}).encode())
 
             elif con.status == connections.Status.Live:
                 # 1. wait utils the user send a message.

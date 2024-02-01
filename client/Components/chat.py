@@ -7,6 +7,7 @@ pygame.font.init()
 
 class Chat:
     # (...) add maximum size to each message.
+    # (...) add multi lines messages.
 
     def __init__(self, size: pygame.Vector2, position: pygame.Vector2, message_margin: int):
         self.size = size
