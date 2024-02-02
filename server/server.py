@@ -96,7 +96,7 @@ def handle_client(con: Connection):
                         continue
 
                     # add the username to the data section.
-                    con.data['username'] = request['data']['username'].strim()
+                    con.data['username'] = request['data']['username']
 
                     # transfer the connection from the wait list to the live connections.
                     live_connections.append(con)
